@@ -5,7 +5,15 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LinkContainer } from "react-router-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { lougout } from "../actions/userActions";
 const Header = () => {
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+  const dispatch = useDispatch();
+  const logoutHandler = () => {
+    dispatch(lougout());
+  };
   return (
     <Navbar bg="primary" variant="dark" expand="lg">
       <Container>
@@ -20,11 +28,23 @@ const Header = () => {
                 <i class="fa-solid fa-cart-shopping"></i>Cart
               </Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/login">
-              <Nav.Link>
-                <i class="fa-solid fa-user"></i>Login
-              </Nav.Link>
-            </LinkContainer>
+
+            {userInfo ? (
+              <NavDropdown title={userInfo.name} id="username">
+                <LinkContainer to="/profile">
+                  <NavDropdown.Item>Profile</NavDropdown.Item>
+                </LinkContainer>
+                <NavDropdown.Item onClick={logoutHandler}>
+                  Logout
+                </NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <LinkContainer to="/login">
+                <Nav.Link>
+                  <i class="fa-solid fa-user"></i>Login
+                </Nav.Link>
+              </LinkContainer>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
