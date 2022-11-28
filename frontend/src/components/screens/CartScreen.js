@@ -21,8 +21,10 @@ const CartScreen = () => {
   console.log(id);
   const navigate = useNavigate();
   let location = useLocation();
-  const qty = location.search ? Number(location.search.split("=")[1]) : 1;
-
+  {
+    /* const qty = location.search ? Number(location.search.split("=")[1]) : 1;
+     */
+  }
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
@@ -34,7 +36,7 @@ const CartScreen = () => {
     dispatch(removeFromCart(id));
   };
   const checkoutHandler = () => {
-    navigate("/login?redirect=shipping");
+    navigate("/shipping");
   };
   return (
     <Row>
