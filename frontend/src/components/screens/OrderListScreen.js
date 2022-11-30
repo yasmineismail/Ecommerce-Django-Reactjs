@@ -6,38 +6,29 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Loader";
 import Message from "../Message";
 import FormContainer from "../FormContainer";
-import { listUsers, deleteUser } from "../../actions/userActions";
+import { listOrders } from "../../actions/orderActions";
 
-const UserListScreen = () => {
+const OrderListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const usersList = useSelector((state) => state.usersList);
-  const { loading, error, users } = usersList;
+  const ordersListAdmin = useSelector((state) => state.ordersListAdmin);
+  const { loading, error, orders } = ordersListAdmin;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const userDelete = useSelector((state) => state.userDelete);
-  const { success: successDelete } = userDelete;
-
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
-      dispatch(listUsers());
+      dispatch(listOrders());
     } else {
       navigate("/login");
     }
-  }, [dispatch, navigate, successDelete, userInfo]);
-
-  const deleteHandler = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      dispatch(deleteUser(id));
-    }
-  };
+  }, [dispatch, navigate, userInfo]);
 
   return (
     <div>
-      <h1>Users</h1>
+      <h1>Orders</h1>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -47,39 +38,46 @@ const UserListScreen = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>ADMIN</th>
+              <th>USER</th>
+              <th>DATE</th>
+              <th>TOTAL</th>
+
+              <th>PAID</th>
+              <th>DELIVERED</th>
+
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user._id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
+            {orders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id}</td>
+                <td>{order.user && order.user.name}</td>
+                <td>{order.createdAt.toString().substring(0, 10)}</td>
+                <td>{order.totalPrice}</td>
+
                 <td>
-                  {user.isAdmin ? (
-                    <i className="fas fa-check" style={{ color: "green" }}></i>
+                  {order.isPaid ? (
+                    order.paidAt.toString().substring(0, 10)
+                  ) : (
+                    <i className="fas fa-times" style={{ color: "red" }}></i>
+                  )}
+                </td>
+
+                <td>
+                  {order.isDelivered ? (
+                    order.deliveredAt.toString().substring(0, 10)
                   ) : (
                     <i className="fas fa-times" style={{ color: "red" }}></i>
                   )}
                 </td>
                 <td>
                   {" "}
-                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
+                  <LinkContainer to={`/order/${order._id}`}>
                     <Button variant="light" className="btn-sm">
-                      <i className="fas fa-edit"></i>
+                      Details
                     </Button>
                   </LinkContainer>
-                  <Button
-                    variant="danger"
-                    className="btn-sm"
-                    onClick={() => deleteHandler(user._id)}
-                  >
-                    <i className="fas fa-trash"></i>
-                  </Button>
                 </td>
               </tr>
             ))}
@@ -90,4 +88,4 @@ const UserListScreen = () => {
   );
 };
 
-export default UserListScreen;
+export default OrderListScreen;

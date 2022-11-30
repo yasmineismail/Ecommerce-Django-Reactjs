@@ -6,8 +6,15 @@ import Message from "../Message";
 import Loader from "../Loader";
 import { PayPalButton } from "react-paypal-button-v2";
 import { Link } from "react-router-dom";
-import { getOrderDetails, payOrder } from "../../actions/orderActions";
-import { ORDER_PAY_RESET } from "../../constants/orderConstants";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../../actions/orderActions";
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVERED_RESET,
+} from "../../constants/orderConstants";
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -20,6 +27,12 @@ const OrderScreen = () => {
 
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   if (!loading && !error) {
     order.itemsPrice = order.orderItems
@@ -39,19 +52,29 @@ const OrderScreen = () => {
   };
 
   useEffect(() => {
-    if (!order || successPay || order._id !== Number(id)) {
+    if (!userInfo) {
+      navigate("/login");
+    }
+    if (!order || successPay || order._id !== Number(id) || successDeliver) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVERED_RESET });
+
       dispatch(getOrderDetails(id));
     } else if (!order.isPaid) {
       if (!window.paypal) {
         addPaypalScript();
       } else {
+        setSdkReady(true);
       }
     }
   }, [dispatch, order, id, successPay]);
 
   const successPaymentHandler = (paymentResult) => {
     dispatch(payOrder(id, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (
@@ -180,6 +203,21 @@ const OrderScreen = () => {
                 </ListGroup.Item>
               )}
             </ListGroup>
+            {loadingDeliver && <Loader />}
+            {userInfo &&
+              userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered && (
+                <ListGroup.Item>
+                  <Button
+                    type="button"
+                    className="btn btn-block"
+                    onClick={deliverHandler}
+                  >
+                    Mark As Deliver
+                  </Button>
+                </ListGroup.Item>
+              )}
           </Card>
         </Col>
       </Row>
