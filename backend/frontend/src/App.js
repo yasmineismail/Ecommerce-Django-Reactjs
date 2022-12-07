@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Container } from "react-bootstrap";
 import HomeScreen from "./components/screens/HomeScreen";
-import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
+import { HashRouter, Routes, Link, Route } from "react-router-dom";
 import ProductScreen from "./components/screens/ProductScreen";
 import CartScreen from "./components/screens/CartScreen";
 import LoginScreen from "./components/screens/LoginScreen";
@@ -22,7 +22,7 @@ import OrderListScreen from "./components/screens/OrderListScreen";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div>
         <Header />
         <main className="py-3">
@@ -55,7 +55,7 @@ function App() {
         </main>
         <Footer />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
