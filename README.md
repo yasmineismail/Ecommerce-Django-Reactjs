@@ -1,11 +1,11 @@
 # TechStore
 
-![TechStore Screenshot](static/images/Screenshot1.png.png)
+![TechStore Screenshot](static/images/Screenshot1.png)
 
 ## Introduction
 
 TechStore is a modern e-commerce platform designed for tech enthusiasts to browse, purchase, and review the latest tech gadgets. Built with Django on the backend and React.js on the frontend, TechStore offers a seamless shopping experience with robust features like user authentication, product search, and secure payment processing.
-  - [Author](www.linkedin.com/in/yasmine-ismail2)
+  - [Author 1](https://www.linkedin.com/in/yasmine-ismail2)
   
 
 ## Installation
